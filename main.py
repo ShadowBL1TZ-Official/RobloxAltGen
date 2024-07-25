@@ -1,7 +1,5 @@
-import sys
 import os
 import json
-import requests
 import secrets
 import time
 from password_strength import PasswordPolicy
@@ -32,115 +30,79 @@ def write_to_file(username, password):
     file_path = os.path.join(directory, 'accounts.txt')
     with open(file_path, 'a') as file:
         file.write(f"{username}:{password}\n")
-    print(f"{username}:{password}")
-
-def create_roblox_account(username, password, email):
-    url = "https://www.roblox.com/CreateAccount"
-    data = {
-        "username": username,
-        "password": password,
-        "confirmPassword": password,
-        "birthday": "2000-01-01",
-        "gender": "Male",
-        "email": email,
-        "parentEmail": "",
-        "passwordStrength": "Good",
-        "context": "HomeSignup",
-        "referrer": "",
-        "flock": "",
-        "refPage": "",
-        "tbsa": "",
-        "nTickets": ""
-    }
-    response = requests.post(url, data=data)
-    print("Response:", response.text)
-    if "Your account has been created!" in response.text:
-        print(f"Roblox account created: {username}")
-        write_to_file(username, password)
-    else:
-        print(f"Failed to create Roblox account: {username}")
-
-def solve_captcha():
-    pass
+    print(f"Created account: {username}:{password}")
 
 def browser_automation_create_roblox_account(username, password, headless=True):
     chrome_options = webdriver.ChromeOptions()
     if headless:
         chrome_options.add_argument('--headless')
     chrome_options.add_argument('--incognito')
+    
     driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://www.roblox.com/CreateAccount")
+
     month_select = Select(driver.find_element(By.ID, "MonthDropdown"))
     month_select.select_by_value("Jan")
+    
     day_select = Select(driver.find_element(By.ID, "DayDropdown"))
     day_select.select_by_value("01")
+    
     year_select = Select(driver.find_element(By.ID, "YearDropdown"))
     year_select.select_by_value("2000")
+    
     username_input = driver.find_element(By.ID, "signup-username")
     username_input.send_keys(username)
+    
     password_input = driver.find_element(By.ID, "signup-password")
     password_input.send_keys(password)
+    
     male_icon = driver.find_element(By.CLASS_NAME, "gender-male")
     male_icon.click()
+    
     signup_button = WebDriverWait(driver, 20).until(
         EC.element_to_be_clickable((By.ID, "signup-button"))
     )
     signup_button.click()
+    
     time.sleep(0.005)
     write_to_file(username, password)
     driver.quit()
 
 def main():
     settings = load_settings()
-    capsolver_key = settings['capsolver_key']
     thread_count = settings['thread_count']
-    verify_mail = settings.get('verify_mail', False)
     paused = False
+
     while True:
         if not paused:
             print("Choose action:")
-            print("1. Continue")
-            print("2. Pause")
-            print("3. Stop")
-            action = input("Enter your action (1, 2, or 3): ")
+            print("1. Start")
+            print("2. Stop")
+            action = input("Enter your action (1 or 2): ")
         else:
             print("Paused. Choose action:")
-            print("1. Continue")
-            print("3. Stop")
-            action = input("Enter your action (1 or 3): ")
+            print("1. Start")
+            print("2. Stop")
+            action = input("Enter your action (1 or 2): ")
+
         if action == '1':
-            if not paused:
-                print("Continuing...")
+            print("Starting account creation...")
             paused = False
         elif action == '2':
-            paused = True
-        elif action == '3':
             print("Execution stopped.")
             break
         else:
-            print("Invalid action. Please enter '1', '2', or '3'.")
+            print("Invalid action. Please enter '1' or '2'.")
+
         if paused:
             input("Press Enter to continue...")
+
         if not paused:
-            print("Choose account creation method:")
-            print("1. Roblox API method")
-            print("2. Browser automation method")
-            choice = input("Enter your choice (1 or 2): ")
-            if choice == '1':
-                for i in range(thread_count):
-                    username = generate_random_username()
-                    password = generate_strong_password()
-                    email = f"user{i+1}@example.com"
-                    create_roblox_account(username, password, email)
-                    time.sleep(0.005)
-            elif choice == '2':
-                for i in range(thread_count):
-                    username = generate_random_username()
-                    password = generate_strong_password()
-                    browser_automation_create_roblox_account(username, password)
-                    time.sleep(0.005)
-            else:
-                print("Invalid choice. Please enter '1' or '2'.")
+            for i in range(thread_count):
+                username = generate_random_username()
+                password = generate_strong_password()
+                browser_automation_create_roblox_account(username, password)
+                time.sleep(0.005)
 
 if __name__ == "__main__":
     main()
