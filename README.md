@@ -9,6 +9,7 @@ Welcome to My Awesome Software! This is a powerful tool that does amazing things
 2. Install the necessary dependencies by running `pip install -r requirements.txt`.
 3. Run the main script using `python main.py`.
 4. Edit main.py to the directory of the repository
+5. Make sure everything from requirements.txt, If something is not installed you can manually install it by copying the name and putting this command `pip install (paste here and remove parentacies)`
 
 ## Usage
 
