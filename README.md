@@ -8,6 +8,7 @@ Welcome to My Awesome Software! This is a powerful tool that does amazing things
 1. Clone this repository to your local machine.
 2. Install the necessary dependencies by running `pip install -r requirements.txt`.
 3. Run the main script using `python main.py`.
+4. Edit main.py to the directory of the repository
 
 ## Usage
 
